@@ -121,4 +121,17 @@ export interface AuthConfig {
      */
     privateKeyPath?: string;
   };
+  /**
+   * Additional security measures to enhance token management.
+   */
+  security?: {
+    /**
+     * The issuer of the token.
+     */
+    issuer?: string;
+    /**
+     * The audience for whom the token is intended.
+     */
+    audience?: string;
+  };
 }
