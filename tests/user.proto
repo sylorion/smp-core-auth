@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package user;
+
+service UserService {
+  rpc Organization(OrganizationRequest) returns (OrganizationResponse);
+}
+
+message OrganizationRequest {
+  string organizationId = 1;
+}
+
+message OrganizationResponse {
+  string organizationId = 1;
+  string legalName = 2;
+  string ownerId = 3;
+  string uniqRef = 4;
+  string status = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+  string deletedAt = 8;
+}

@@ -5,7 +5,7 @@ import path from 'path';
 import jwt, { SignOptions, VerifyOptions, JwtPayload } from 'jsonwebtoken';
 import { AuthConfig } from '../interfaces/AuthConfig.interface';
 import { TokenBlacklist } from '../tokens/TokenBlacklist';
-import { DEFAULT_JWT_EXPIRES_IN, DEFAULT_REFRESH_TOKEN_EXPIRES_IN } from '../constants';
+import { DEFAULT_JWT_EXPIRES_IN, DEFAULT_ACCESS_TOKEN_EXPIRES_IN, DEFAULT_REFRESH_TOKEN_EXPIRES_IN } from '../constants';
 
 /**
  * Service for issuing, validating, and revoking JWT tokens.
@@ -36,15 +36,16 @@ export class TokenService {
       // Use HS256 – ensure a secret is provided.
       this.secretKey = config.jwtSecret;
     }
-
+    const expiresInAccess = typeof config.jwtExpiresIn === 'string' ? parseInt(config.jwtExpiresIn, 10) : config.jwtExpiresIn || DEFAULT_JWT_EXPIRES_IN;
     this.accessTokenOptions = {
       algorithm: useAsymmetric ? 'RS256' : 'HS256',
-      expiresIn: config.jwtExpiresIn || DEFAULT_JWT_EXPIRES_IN,
+      expiresIn: expiresInAccess,
     };
 
+    const expiresInRefresh = typeof config.refreshTokenExpiresIn === 'string' ? parseInt(config.refreshTokenExpiresIn, 10) : config.refreshTokenExpiresIn || DEFAULT_REFRESH_TOKEN_EXPIRES_IN;
     this.refreshTokenOptions = {
       algorithm: useAsymmetric ? 'RS256' : 'HS256',
-      expiresIn: config.refreshTokenExpiresIn || DEFAULT_REFRESH_TOKEN_EXPIRES_IN,
+      expiresIn: expiresInRefresh,
     };
 
     this.verifyOptions = {

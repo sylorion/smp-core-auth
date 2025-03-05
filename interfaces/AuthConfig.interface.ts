@@ -13,12 +13,12 @@ export interface AuthConfig {
    * Secret key used to sign JWT access tokens.
    */
   jwtSecret: string;
-
+  accessTokenSecret?: string;
   /**
    * Expiration time for JWT access tokens (e.g., '15m', '1h').
    */
   jwtExpiresIn: string;
-
+  accessTokenExpiresIn?: string;
   /**
    * Secret key used to sign JWT refresh tokens.
    */
@@ -28,7 +28,7 @@ export interface AuthConfig {
    * Expiration time for JWT refresh tokens (e.g., '7d').
    */
   refreshTokenExpiresIn: string;
-
+  
   /**
    * Configuration for OAuth providers.
    * Each key is the provider name (e.g., 'google', 'facebook', 'apple', etc.) with its corresponding client configuration.

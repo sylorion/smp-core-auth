@@ -38,9 +38,11 @@ export class RefreshTokenManager {
    * Creates a signed refresh token with the provided payload.
    */
   public createRefreshToken(payload: object): string {
+    const expiresIn = (typeof this.expiresIn === 'string') ? parseInt(this.expiresIn as string, 10) : this.expiresIn;
+
     const signOptions: SignOptions = {
       algorithm: this.algorithm,
-      expiresIn: this.expiresIn,
+      expiresIn: expiresIn,
     };
     try {
       return jwt.sign(payload, this.secretOrPrivateKey, signOptions);

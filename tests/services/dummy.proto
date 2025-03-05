@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package dummyPackage;
+
+service DummyService {
+  rpc dummyMethod(UserRequest) returns (UserRolesResponse);
+}
+
+message UserRequest {
+
+}
+
+message UserRolesResponse {
+  string userId = 1;
+  string label  = 2;
+  repeated UserRoleResponse roles = 3;
+  string status = 4;
+  string createdAt = 5;
+  string updatedAt = 6;
+  string deletedAt = 7;
+}
+  
+message UserRoleResponse {
+  string roleId = 1;
+  string name = 2;
+  string authorId = 3;
+  string permissons = 4;
+  string organizationId = 5;
+  string state = 6;
+  string createdAt = 7;
+  string updatedAt = 8;
+  string deletedAt = 9;
+}

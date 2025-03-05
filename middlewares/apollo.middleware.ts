@@ -1,7 +1,7 @@
 // middlewares/apollo.middleware.ts
 
 import { Request } from 'express';
-import { AuthenticationError } from 'apollo-server-errors';
+// import { AuthenticationError } from 'apollo-server-errors';
 import { TokenService } from '../services/TokenService';
 
 /**
@@ -26,19 +26,19 @@ export async function apolloAuthMiddleware(
 ): Promise<{ user?: any }> {
   const authHeader = req.headers['authorization'] || req.headers['Authorization'];
   if (authHeader) {
-    const parts = authHeader.split(' ');
+    const parts = (typeof authHeader === 'string' ? authHeader.split(' ') : (Array.isArray(authHeader) && authHeader.length > 0 ? authHeader[0].split(' ') : []));
     if (parts.length === 2 && parts[0].toLowerCase() === 'bearer') {
       const token = parts[1];
       try {
         const payload = tokenService.validateAccessToken(token);
         return { user: payload };
       } catch (error) {
-        throw new AuthenticationError(
+        throw new Error(
           error instanceof Error ? error.message : 'Unauthorized.'
         );
       }
     } else {
-      throw new AuthenticationError('Invalid Authorization header format. Expected "Bearer <token>".');
+      throw new Error('Invalid Authorization header format. Expected "Bearer <token>".');
     }
   }
   // No token provided: return an empty context (or optionally, throw an error if auth is required)

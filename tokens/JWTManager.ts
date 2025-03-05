@@ -1,7 +1,7 @@
 // tokens/JWTManager.ts
 
 import jwt, { SignOptions, VerifyOptions, JwtPayload } from 'jsonwebtoken';
-
+import { DEFAULT_JWT_EXPIRES_IN } from '../constants';
 export interface JWTManagerOptions {
   /** Secret (or private key) for signing tokens */
   secretOrPrivateKey: string | Buffer;
@@ -38,9 +38,11 @@ export class JWTManager {
    * Creates a signed JWT with the provided payload.
    */
   public createToken(payload: object): string {
+    const expiresIn = (typeof this.expiresIn === 'string') ? parseInt(this.expiresIn as string, 10) : this.expiresIn;
+    
     const signOptions: SignOptions = {
       algorithm: this.algorithm,
-      expiresIn: this.expiresIn,
+      expiresIn: expiresIn,
     };
     try {
       return jwt.sign(payload, this.secretOrPrivateKey, signOptions);

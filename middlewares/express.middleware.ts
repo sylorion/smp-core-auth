@@ -10,15 +10,15 @@ import { TokenService } from '../services/TokenService';
  * @param tokenService - An instance of TokenService used to validate tokens.
  * @returns Express middleware function.
  */
-export function expressAuthMiddleware(tokenService: TokenService) {
-  return (req: Request, res: Response, next: NextFunction): void => {
+export function expressAuthMiddleware(tokenService: TokenService): (req: Request, res: Response, next: NextFunction) => void {
+  return (req: Request, res: Response, next: NextFunction) => {
     try {
       const authHeader = req.headers['authorization'] || req.headers['Authorization'];
       if (!authHeader) {
-        return res.status(401).json({ message: 'Missing Authorization header.' });
+        const rt = res.status(401).json({ message: 'Missing Authorization header.' });
+        return rt;
       }
-
-      const parts = authHeader.split(' ');
+      const parts = (typeof authHeader === 'string' ? authHeader.split(' ') : (Array.isArray(authHeader) && authHeader.length > 0 ? authHeader[0].split(' ') : []));
       if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer') {
         return res.status(401).json({
           message: 'Invalid Authorization header format. Expected "Bearer <token>".',

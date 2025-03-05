@@ -10,6 +10,7 @@
 // JWT expiration defaults
 export const DEFAULT_JWT_EXPIRES_IN: string = process.env.DEFAULT_JWT_EXPIRES_IN || '15m';
 export const DEFAULT_REFRESH_TOKEN_EXPIRES_IN: string = process.env.DEFAULT_REFRESH_TOKEN_EXPIRES_IN || '7d';
+export const DEFAULT_ACCESS_TOKEN_EXPIRES_IN: string = process.env.DEFAULT_ACCESS_TOKEN_EXPIRES_IN || DEFAULT_JWT_EXPIRES_IN;
 
 // Bcrypt configuration
 export const DEFAULT_BCRYPT_SALT_ROUNDS: number = parseInt(process.env.BCRYPT_SALT_ROUNDS || '12', 10);
