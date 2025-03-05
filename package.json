@@ -11,8 +11,11 @@
   "scripts": {
     "build": "npx tsc",
     "test": "jest",
-    "start": "node dist/index.js",
-    "prepare": "npx tsc --outDir ./dist"
+    "start": "npm run build ; node --trace-deprecation dist/index.js",
+    "lint": "eslint 'src/**/*.{ts,js}' --fix",
+    "prepare": "npx tsc --outDir ./dist",
+    "format": "prettier --write 'src/**/*.{ts,js}'"
+
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.8.13",
