@@ -4,6 +4,7 @@
   "description": "A production-ready authentication library for Node.js and NestJS.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "test": "jest",

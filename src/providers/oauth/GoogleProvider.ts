@@ -1,7 +1,7 @@
 // providers/oauth/GoogleProvider.ts
 
 import axios from 'axios';
-import { OAuthProvider } from './OAuthProvider.interface';
+import { OAuthProvider } from './OAuthProvider.interface.js';
 
 export class GoogleProvider implements OAuthProvider {
   private clientId: string;

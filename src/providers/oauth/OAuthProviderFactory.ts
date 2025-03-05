@@ -1,8 +1,8 @@
 // providers/oauth/OAuthProviderFactory.ts
 
-import { OAuthProvider } from './OAuthProvider.interface';
-import { GoogleProvider } from './GoogleProvider';
-import { FacebookProvider } from './FacebookProvider';
+import { OAuthProvider } from './OAuthProvider.interface.js';
+import { GoogleProvider } from './GoogleProvider.js';
+import { FacebookProvider } from './FacebookProvider.js';
 
 interface ProviderConfig {
   type: string;

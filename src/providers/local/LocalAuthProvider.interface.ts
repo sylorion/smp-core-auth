@@ -1,5 +1,5 @@
 // providers/local/LocalAuthProvider.interface.ts
-import { UserProfile } from '../../interfaces/UserProfile.interface';
+import { UserProfile } from '../../interfaces/UserProfile.interface.js';
 
 /**
  * Interface for the local authentication provider.

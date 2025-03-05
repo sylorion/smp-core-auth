@@ -1,12 +1,10 @@
 // services/AuthService.ts
 
-import { TokenService } from './TokenService';
-import { CacheService } from './CacheService';
-import { LocalAuthProvider } from '../providers/local/LocalAuthProvider';
-import { OAuthProviderFactory } from '../providers/oauth/OAuthProviderFactory';
-import { GRPCService, Credentials } from './GRPCService';
-import { UserProfile } from '../interfaces/UserProfile.interface';
-import { LocalAuthProviderInterface } from '../providers/local/LocalAuthProvider.interface';
+import { TokenService } from './TokenService.js';
+import { CacheService } from './CacheService.js';  
+import { GRPCService, Credentials } from './GRPCService.js';
+import { UserProfile } from '../interfaces/UserProfile.interface.js';
+import { LocalAuthProviderInterface } from '../providers/local/LocalAuthProvider.interface.js';
 
 export interface AuthServiceConfig {
   tokenService: TokenService;

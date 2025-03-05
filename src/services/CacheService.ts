@@ -1,6 +1,6 @@
 // services/CacheService.ts
 
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 
 /**
  * CacheService provides a unified interface for caching,

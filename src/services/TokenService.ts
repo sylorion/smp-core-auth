@@ -3,9 +3,9 @@
 import fs from 'fs';
 import path from 'path';
 import jwt, { SignOptions, VerifyOptions, JwtPayload } from 'jsonwebtoken';
-import { AuthConfig } from '../interfaces/AuthConfig.interface';
-import { TokenBlacklist } from '../tokens/TokenBlacklist';
-import { DEFAULT_JWT_EXPIRES_IN, DEFAULT_ACCESS_TOKEN_EXPIRES_IN, DEFAULT_REFRESH_TOKEN_EXPIRES_IN } from '../constants';
+import { AuthConfig } from '../interfaces/AuthConfig.interface.js';
+import { TokenBlacklist } from '../tokens/TokenBlacklist.js';
+import { DEFAULT_JWT_EXPIRES_IN, DEFAULT_ACCESS_TOKEN_EXPIRES_IN, DEFAULT_REFRESH_TOKEN_EXPIRES_IN } from '../constants.js';
 
 /**
  * Service for issuing, validating, and revoking JWT tokens.

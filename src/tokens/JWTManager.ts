@@ -1,7 +1,7 @@
 // tokens/JWTManager.ts
 
 import jwt, { SignOptions, VerifyOptions, JwtPayload } from 'jsonwebtoken';
-import { DEFAULT_JWT_EXPIRES_IN } from '../constants';
+import { DEFAULT_JWT_EXPIRES_IN } from '../constants.js';
 export interface JWTManagerOptions {
   /** Secret (or private key) for signing tokens */
   secretOrPrivateKey: string | Buffer;

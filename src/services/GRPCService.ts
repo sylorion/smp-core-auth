@@ -2,7 +2,7 @@
 
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
-import { UserProfile } from '../interfaces/UserProfile.interface';
+import { UserProfile } from '../interfaces/UserProfile.interface.js';
 
 export interface Credentials {
   email: string;

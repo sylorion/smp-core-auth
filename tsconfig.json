@@ -1,13 +1,21 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "commonjs",
+    "module": "NodeNext",         // Use Node.js ESM resolution
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",           // Ensure support for latest JavaScript features
+    "outDir": "./dist",
+    "rootDir": "src",
     "declaration": true,
-    "outDir": "dist",
+    "removeComments": true, 
+    "allowSyntheticDefaultImports": true,  
+    "resolveJsonModule": true,
+    "sourceMap": true,
     "strict": true,
-    "esModuleInterop": true,
+    "allowJs": true,
+    "esModuleInterop": true,      // Ensure compatibility with common modules
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts"]
+  "include": ["src/**/*.ts", "src"],
+  "exclude": ["node_modules", "dist"]
 }

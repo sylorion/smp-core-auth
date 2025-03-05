@@ -1,7 +1,7 @@
 // providers/oauth/FacebookProvider.ts
 
 import axios from 'axios';
-import { OAuthProvider } from './OAuthProvider.interface';
+import { OAuthProvider } from './OAuthProvider.interface.js';
 
 export class FacebookProvider implements OAuthProvider {
   private clientId: string;
