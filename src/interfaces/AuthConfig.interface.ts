@@ -69,7 +69,33 @@ export interface AuthConfig {
       clientSecret: string;
       redirectUri: string;
     };
+    twitter?: {
+      clientId: string;
+      clientSecret: string;
+      redirectUri: string;
+    };
+    linkedin?: {
+      clientId: string;
+      clientSecret: string;
+      redirectUri: string;
+    };
+    github?: {
+      clientId: string;
+      clientSecret: string;
+      redirectUri: string;
+    };
+  };
 
+  /**
+   * Additional OAuth provider configuration.
+   * Represents additional optional providers that can be added.
+   */
+  additionalOauthProviders?: {
+    [providerName: string]: {
+      clientId: string;
+      clientSecret: string;
+      redirectUri: string;
+    };
   };
 
   /**

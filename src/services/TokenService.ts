@@ -1,28 +1,28 @@
 // services/TokenService.ts
+// services/TokenService.ts
 
 import fs from 'fs';
 import path from 'path';
-import jwt, { SignOptions, VerifyOptions, JwtPayload } from 'jsonwebtoken';
+import { JWTManager, RefreshTokenManager } from '../tokens/JWTManager.js';
 import { AuthConfig } from '../interfaces/AuthConfig.interface.js';
-import { TokenBlacklist } from '../tokens/TokenBlacklist.js';
-import { DEFAULT_JWT_EXPIRES_IN, DEFAULT_ACCESS_TOKEN_EXPIRES_IN, DEFAULT_REFRESH_TOKEN_EXPIRES_IN } from '../constants.js';
+import { CacheService } from './CacheService.js';
+import { DEFAULT_JWT_EXPIRES_IN, DEFAULT_REFRESH_TOKEN_EXPIRES_IN } from '../constants.js';
+
 
 /**
  * Service for issuing, validating, and revoking JWT tokens.
  * Supports symmetric (HS256) and asymmetric (RS256) signing based on configuration.
  */
 export class TokenService {
-  private readonly accessTokenOptions: SignOptions;
-  private readonly refreshTokenOptions: SignOptions;
-  private readonly verifyOptions: VerifyOptions;
+  private jwtManager: JWTManager;
+  private refreshTokenManager: RefreshTokenManager;
   private privateKey?: Buffer;      // For RS256 signing
   private publicKey?: Buffer;       // For RS256 verification
   private secretKey?: string;       // For HS256 signing
+  private refreshTokenSecret?: string; // For HS256 signing
+  private verifyOptions: { algorithms: string[] };
 
-  constructor(
-    private config: AuthConfig,
-    private tokenBlacklist: TokenBlacklist
-  ) {
+  constructor(private config: AuthConfig, private cacheService: CacheService) {
     this.validateConfig(config);
     const useAsymmetric = config.token?.algorithm === 'RS256';
 
@@ -35,83 +35,79 @@ export class TokenService {
     } else {
       // Use HS256 – ensure a secret is provided.
       this.secretKey = config.jwtSecret;
+      this.refreshTokenSecret = config.refreshTokenSecret;
     }
-    const expiresInAccess = typeof config.jwtExpiresIn === 'string' ? parseInt(config.jwtExpiresIn, 10) : config.jwtExpiresIn || DEFAULT_JWT_EXPIRES_IN;
-    this.accessTokenOptions = {
-      algorithm: useAsymmetric ? 'RS256' : 'HS256',
-      expiresIn: expiresInAccess,
-    };
-
-    const expiresInRefresh = typeof config.refreshTokenExpiresIn === 'string' ? parseInt(config.refreshTokenExpiresIn, 10) : config.refreshTokenExpiresIn || DEFAULT_REFRESH_TOKEN_EXPIRES_IN;
-    this.refreshTokenOptions = {
-      algorithm: useAsymmetric ? 'RS256' : 'HS256',
-      expiresIn: expiresInRefresh,
-    };
 
     this.verifyOptions = {
-      algorithms: [useAsymmetric ? 'RS256' : 'HS256'],
+      algorithms: [ useAsymmetric ? 'RS256' : 'HS256' ],
     };
+
+    // Initialize JWTManager for access tokens.
+    this.jwtManager = new JWTManager({
+      secretOrPrivateKey: this.privateKey ?? (this.secretKey ?? config.jwtSecret),
+      publicKey: this.publicKey ?? (config.token as any)?.publicKey,
+      algorithm: config.token?.algorithm,
+      expiresIn: config.jwtExpiresIn || DEFAULT_JWT_EXPIRES_IN,
+      cacheService: this.cacheService,
+    });
+
+    // Initialize RefreshTokenManager for refresh tokens.
+    this.refreshTokenManager = new RefreshTokenManager({
+      secretOrPrivateKey: this.privateKey ?? (this.refreshTokenSecret ?? config.refreshTokenSecret),
+      publicKey: this.publicKey ?? (config.token as any)?.publicKey,
+      algorithm: config.token?.algorithm,
+      expiresIn: config.refreshTokenExpiresIn || DEFAULT_REFRESH_TOKEN_EXPIRES_IN,
+      cacheService: this.cacheService,
+    });
   }
 
   /**
-   * Issues a new access token with the given payload.
+   * Creates an access token with the provided payload.
    */
-  public generateAccessToken(payload: Record<string, unknown>): string {
-    const key = this.privateKey ?? this.secretKey!;
-    return jwt.sign(payload, key, this.accessTokenOptions);
+  public createAccessToken(payload: object): string {
+    return this.jwtManager.createToken(payload);
   }
 
   /**
-   * Issues a new refresh token with the given payload.
+   * Verifies the access token and returns the decoded payload.
    */
-  public generateRefreshToken(payload: Record<string, unknown>): string {
-    const key = this.privateKey ?? this.secretKey!;
-    return jwt.sign(payload, key, this.refreshTokenOptions);
+  public async verifyAccessToken(token: string): Promise<any> {
+    return await this.jwtManager.verifyToken(token);
   }
 
   /**
-   * Validates an access token, checking signature, expiration, and blacklist.
+   * Invalidates an access token (e.g. during logout).
    */
-  public validateAccessToken(token: string): JwtPayload | string {
-    if (this.tokenBlacklist.isBlacklisted(token)) {
-      throw new Error('Token has been revoked.');
-    }
-    try {
-      const key = this.publicKey ?? this.secretKey!;
-      return jwt.verify(token, key, this.verifyOptions);
-    } catch (error) {
-      throw new Error(`Invalid or expired access token: ${error instanceof Error ? error.message : error}`);
-    }
+  public async invalidateAccessToken(token: string): Promise<void> {
+    await this.jwtManager.invalidateToken(token);
   }
 
   /**
-   * Validates a refresh token, checking signature, expiration, and blacklist.
+   * Creates a refresh token with the provided payload.
    */
-  public verifyRefreshToken(token: string): JwtPayload | string {
-    if (this.tokenBlacklist.isBlacklisted(token)) {
-      throw new Error('Refresh token has been revoked.');
-    }
-    try {
-      const key = this.publicKey ?? this.secretKey!;
-      return jwt.verify(token, key, this.verifyOptions);
-    } catch (error) {
-      throw new Error(`Invalid or expired refresh token: ${error instanceof Error ? error.message : error}`);
-    }
+  public createRefreshToken(payload: object): string {
+    return this.refreshTokenManager.createToken(payload);
   }
 
   /**
-   * Revokes a token by adding it to the blacklist.
+   * Verifies the refresh token and returns the decoded payload.
    */
-  public revokeToken(token: string): void {
-    this.tokenBlacklist.add(token);
+  public async verifyRefreshToken(token: string): Promise<any> {
+    return await this.refreshTokenManager.verifyToken(token);
   }
 
   /**
-   * Decodes a token without verifying signature or expiration.
+   * Invalidates a refresh token.
    */
-  public decodeToken(token: string): JwtPayload | null {
-    const decoded = jwt.decode(token);
-    return typeof decoded === 'object' ? decoded : null;
+  public async invalidateRefreshToken(token: string): Promise<void> {
+    await this.refreshTokenManager.invalidateToken(token);
+  }
+
+  /**
+   * Decodes a token without verifying its signature.
+   */
+  public decodeToken(token: string): any {
+    return this.jwtManager.decodeToken(token);
   }
 
   /**
