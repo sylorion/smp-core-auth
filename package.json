@@ -24,6 +24,7 @@
     "ioredis": "^5.0.0",
     "jsonwebtoken": "^9.0.2",
     "rxjs": "^7.8.2",
+    "smp-bef-utils": "github:sylorion/smp-bef-utils",
     "zod": "^3.24.2"
   },
   "devDependencies": {
