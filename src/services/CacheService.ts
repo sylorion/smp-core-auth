@@ -1,12 +1,12 @@
 // services/CacheService.ts
 
 import { Redis } from 'ioredis';
-
+import { CacheAuth } from '../interfaces/Cache.interface.js';
 /**
  * CacheService provides a unified interface for caching,
  * using Redis if configuration is provided, or an in-memory Map otherwise.
  */
-export class CacheService {
+export class CacheService implements CacheAuth {
   private redisClient?: Redis;
   private inMemoryCache: Map<string, any>;
 
