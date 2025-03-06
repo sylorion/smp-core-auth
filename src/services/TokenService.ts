@@ -6,6 +6,7 @@ import path from 'path';
 import { JWTManager, RefreshTokenManager } from '../tokens/JWTManager.js';
 import { AuthConfig } from '../interfaces/AuthConfig.interface.js';
 import { CacheService } from './CacheService.js';
+import { CacheAuth } from '../interfaces/Cache.interface.js';
 import { DEFAULT_JWT_EXPIRES_IN, DEFAULT_REFRESH_TOKEN_EXPIRES_IN } from '../constants.js';
 
 
@@ -22,7 +23,7 @@ export class TokenService {
   private refreshTokenSecret?: string; // For HS256 signing
   private verifyOptions: { algorithms: string[] };
 
-  constructor(private config: AuthConfig, private cacheService: CacheService) {
+  constructor(private config: AuthConfig, private cacheService: CacheAuth) {
     this.validateConfig(config);
     const useAsymmetric = config.token?.algorithm === 'RS256';
 

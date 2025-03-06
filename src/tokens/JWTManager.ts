@@ -3,6 +3,7 @@
 import jwt, { SignOptions, VerifyOptions, JwtPayload } from 'jsonwebtoken';
 import { CacheService } from '../services/CacheService.js';
 import { generateRandomToken } from '../utils/crypto.util.js';
+import { CacheAuth } from '../interfaces/Cache.interface.js';
 
 /**
  * Options for configuring the BaseTokenManager.
@@ -17,7 +18,7 @@ export interface BaseTokenManagerOptions {
   /** Expiration for the token (e.g., '15m', '7d') */
   expiresIn: string | number;
   /** Optional CacheService instance for token metadata storage */
-  cacheService?: CacheService;
+  cacheService?: CacheAuth;
 }
 
 
@@ -48,7 +49,7 @@ export function parseExpiry(expiry: string | number): number {
 /**
  * BaseTokenManager handles creation, verification, invalidation, and decoding of tokens.
  * It stores token metadata (including a unique jti and an "invalidate" flag)
- * in the provided CacheService.
+ * in the provided CacheAuth.
  */
 export abstract class BaseTokenManager {
   protected secretOrPrivateKey: string | Buffer;
@@ -56,7 +57,7 @@ export abstract class BaseTokenManager {
   protected algorithm: 'HS256' | 'RS256';
   protected expiresIn: string | number;
   protected verifyOptions: VerifyOptions;
-  protected cacheService?: CacheService;
+  protected cacheService?: CacheAuth;
   protected ttlSeconds: number;
 
   constructor(options: BaseTokenManagerOptions) {
