@@ -4,7 +4,7 @@
 /build
 tsconfig.build.tsbuildinfo
 tsconfig.tsbuildinfo
-
+package-lock.json
 # Logs
 logs
 *.log
